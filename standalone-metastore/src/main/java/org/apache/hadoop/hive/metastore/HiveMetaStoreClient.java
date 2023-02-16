@@ -431,7 +431,7 @@ public class HiveMetaStoreClient implements IMetaStoreClient, AutoCloseable {
 
     String transportMode = MetastoreConf.getVar(conf, ConfVars.METASTORE_CLIENT_THRIFT_TRANSPORT_MODE);
     boolean isHttpTransportMode = transportMode.equalsIgnoreCase("http");
-
+    LOG.info("VIHANG-DEBUG: Http mode is " + isHttpTransportMode);
     for (int attempt = 0; !isConnected && attempt < retries; ++attempt) {
       for (URI store : metastoreUris) {
         LOG.info("Trying to connect to metastore with URI ({}) in {} transport mode", store,
@@ -457,6 +457,7 @@ public class HiveMetaStoreClient implements IMetaStoreClient, AutoCloseable {
           client = new ThriftHiveMetastore.Client(protocol);
           try {
             if (!transport.isOpen()) {
+              LOG.info("VIHANG-DEBUG: Opening the transport!");
               transport.open();
               final int newCount = connCount.incrementAndGet();
               if (useSSL) {
@@ -535,14 +536,15 @@ public class HiveMetaStoreClient implements IMetaStoreClient, AutoCloseable {
  */
   private THttpClient createHttpClient(URI store, boolean useSSL) throws MetaException,
           TTransportException {
-    String path = MetaStoreUtils.getHttpPath(MetastoreConf.getVar(conf, ConfVars.THRIFT_HTTP_PATH));
-    String httpUrl = (useSSL ? "https://" : "http://") + store.getHost() + ":" + store.getPort() + path;
+    // String path = MetaStoreUtils.getHttpPath(MetastoreConf.getVar(conf, ConfVars.THRIFT_HTTP_PATH));
+    String httpUrl = "https://dbc-11466e38-8a18.dev.databricks.com/api/2.0/unity-hms-proxy/test";
 
     HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
     String authType = MetastoreConf.getVar(conf, ConfVars.METASTORE_CLIENT_AUTH_MODE);
     if (authType.equalsIgnoreCase("jwt")) {
       // fetch JWT token from environment and set it in Auth Header in HTTP request
       String jwtToken = System.getenv("HMS_JWT");
+      LOG.info("VIHANG-DEBUG: Using HMS_JWT " + jwtToken);
       if (jwtToken == null || jwtToken.isEmpty()) {
         LOG.debug("No jwt token set in environment variable: HMS_JWT");
         throw new MetaException("For auth mode JWT, valid signed jwt token must be provided in the "
@@ -590,6 +592,7 @@ public class HiveMetaStoreClient implements IMetaStoreClient, AutoCloseable {
                 MetastoreConf.getVar(conf, ConfVars.SSL_TRUSTSTORE_TYPE).trim();
         String trustStoreAlgorithm =
                 MetastoreConf.getVar(conf, ConfVars.SSL_TRUSTMANAGERFACTORY_ALGORITHM).trim();
+
         tHttpClient = SecurityUtils.getThriftHttpsClient(httpUrl, trustStorePath, trustStorePassword,
                 trustStoreAlgorithm, trustStoreType, httpClientBuilder);
       }  else {
@@ -1613,6 +1616,7 @@ public class HiveMetaStoreClient implements IMetaStoreClient, AutoCloseable {
 
   @Override
   public Database getDatabase(String name) throws TException {
+    LOG.info("VIHANG-DEBUG: Getting database " + name);
     return getDatabase(getDefaultCatalog(conf), name);
   }
 

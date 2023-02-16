@@ -324,7 +324,7 @@ public class SecurityUtils {
           KeyStoreException, NoSuchAlgorithmException, CertificateException,
           KeyManagementException {
     Preconditions.checkNotNull(underlyingHttpClientBuilder, "httpClientBuilder should not be null");
-    if (trustStoreType == null || trustStoreType.isEmpty()) {
+    /* if (trustStoreType == null || trustStoreType.isEmpty()) {
       trustStoreType = KeyStore.getDefaultType();
     }
     KeyStore sslTrustStore = KeyStore.getInstance(trustStoreType);
@@ -334,9 +334,9 @@ public class SecurityUtils {
 
     SSLContext sslContext =
         SSLContexts.custom().setTrustManagerFactoryAlgorithm(trustStoreAlgorithm).
-            loadTrustMaterial(sslTrustStore, null).build();
+            loadTrustMaterial(sslTrustStore, null).build(); */
     SSLConnectionSocketFactory socketFactory =
-        new SSLConnectionSocketFactory(sslContext, new DefaultHostnameVerifier(null));
+        new SSLConnectionSocketFactory(SSLContext.getDefault(), new DefaultHostnameVerifier(null));
     final Registry<ConnectionSocketFactory> registry =
         RegistryBuilder.<ConnectionSocketFactory> create().register("https", socketFactory)
             .build();
