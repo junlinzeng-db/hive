@@ -911,6 +911,16 @@ public class MetastoreConf {
                     " and password. Any other value is ignored right now but may be used later."
                     + "If JWT- Supported only in HTTP transport mode. If set, HMS Client will pick the value of JWT from "
                     + "environment variable HMS_JWT and set it in Authorization header in http request"),
+    METASTORE_CLIENT_ADDITIONAL_HEADERS("metastore.client.http.additional.headers",
+            "hive.metastore.client.http.additional.headers",
+            "X-Databricks-Catalog-Name=unityhmsproxy",
+            "Comma separated list of headers which are passed to the " +
+                    "metastore service in the http headers"
+            ),
+    METASTORE_SERVER_HTTP_URL("metastore.server.http.url",
+            "hive.metastore.server.http.url",
+            "",
+            "HTTP url where metastore server is configured"),
     METASTORE_CLIENT_PLAIN_USERNAME("metastore.client.plain.username",
             "hive.metastore.client.plain.username",  "",
             "The username used by the metastore client when " +

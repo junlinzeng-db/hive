@@ -23,6 +23,7 @@ public class TestUnityHMSProxyService extends TestRemoteHiveMetaStore {
     protected HiveMetaStoreClient createClient() throws Exception {
         MetastoreConf.setVar(conf, MetastoreConf.ConfVars.METASTORE_CLIENT_THRIFT_TRANSPORT_MODE, "http");
         MetastoreConf.setVar(conf, MetastoreConf.ConfVars.METASTORE_CLIENT_AUTH_MODE, "JWT");
+        MetastoreConf.setVar(conf, MetastoreConf.ConfVars.METASTORE_SERVER_HTTP_URL, "<http endpoint here>");
         MetastoreConf.setBoolVar(conf, MetastoreConf.ConfVars.USE_SSL, false);
         return super.createClient();
     }
@@ -36,5 +37,13 @@ public class TestUnityHMSProxyService extends TestRemoteHiveMetaStore {
         Database retDb = client.getDatabase("testUnityDb");
         Assert.assertNotNull(retDb);
         Assert.assertEquals("testunitydb", retDb.getName().toLowerCase(Locale.ROOT));
+    }
+
+    @Test
+    public void testGetUnityDatabase() throws Exception {
+        Database db = client.getDatabase("test_schema");
+        Assert.assertNotNull(db);
+        Assert.assertEquals("test_schema", db.getName());
+        Assert.assertEquals("unityhmsproxy", db.getCatalogName());
     }
 }
