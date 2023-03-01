@@ -324,19 +324,23 @@ public class SecurityUtils {
           KeyStoreException, NoSuchAlgorithmException, CertificateException,
           KeyManagementException {
     Preconditions.checkNotNull(underlyingHttpClientBuilder, "httpClientBuilder should not be null");
-    /* if (trustStoreType == null || trustStoreType.isEmpty()) {
-      trustStoreType = KeyStore.getDefaultType();
-    }
-    KeyStore sslTrustStore = KeyStore.getInstance(trustStoreType);
-    try (FileInputStream fis = new FileInputStream(trustStorePath)) {
-      sslTrustStore.load(fis, trustStorePasswd.toCharArray());
-    }
+    SSLContext sslContext;
+    if (trustStorePath.isEmpty()) {
+      sslContext = SSLContext.getDefault();
+    } else {
+      if (trustStoreType == null || trustStoreType.isEmpty()) {
+        trustStoreType = KeyStore.getDefaultType();
+      }
+      KeyStore sslTrustStore = KeyStore.getInstance(trustStoreType);
+      try (FileInputStream fis = new FileInputStream(trustStorePath)) {
+        sslTrustStore.load(fis, trustStorePasswd.toCharArray());
+      }
 
-    SSLContext sslContext =
-        SSLContexts.custom().setTrustManagerFactoryAlgorithm(trustStoreAlgorithm).
-            loadTrustMaterial(sslTrustStore, null).build(); */
+      sslContext = SSLContexts.custom().setTrustManagerFactoryAlgorithm(trustStoreAlgorithm)
+              .loadTrustMaterial(sslTrustStore, null).build();
+    }
     SSLConnectionSocketFactory socketFactory =
-        new SSLConnectionSocketFactory(SSLContext.getDefault(), new DefaultHostnameVerifier(null));
+        new SSLConnectionSocketFactory(sslContext, new DefaultHostnameVerifier(null));
     final Registry<ConnectionSocketFactory> registry =
         RegistryBuilder.<ConnectionSocketFactory> create().register("https", socketFactory)
             .build();

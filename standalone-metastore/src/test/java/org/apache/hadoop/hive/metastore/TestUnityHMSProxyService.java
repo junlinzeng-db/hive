@@ -23,8 +23,9 @@ public class TestUnityHMSProxyService extends TestRemoteHiveMetaStore {
     protected HiveMetaStoreClient createClient() throws Exception {
         MetastoreConf.setVar(conf, MetastoreConf.ConfVars.METASTORE_CLIENT_THRIFT_TRANSPORT_MODE, "http");
         MetastoreConf.setVar(conf, MetastoreConf.ConfVars.METASTORE_CLIENT_AUTH_MODE, "JWT");
-        MetastoreConf.setVar(conf, MetastoreConf.ConfVars.METASTORE_SERVER_HTTP_URL, "<http endpoint here>");
-        MetastoreConf.setBoolVar(conf, MetastoreConf.ConfVars.USE_SSL, false);
+        MetastoreConf.setVar(conf, MetastoreConf.ConfVars.THRIFT_URIS, "https://test-shard.dev.databricks.com");
+        MetastoreConf.setVar(conf, MetastoreConf.ConfVars.THRIFT_HTTP_PATH, "/api/2.0/unity-hms-proxy/test");
+        MetastoreConf.setBoolVar(conf, MetastoreConf.ConfVars.USE_SSL, true);
         return super.createClient();
     }
 

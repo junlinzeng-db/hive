@@ -60,7 +60,7 @@ public class TestRemoteHiveMetaStore extends TestHiveMetaStore {
 
   @Override
   protected HiveMetaStoreClient createClient() throws Exception {
-    MetastoreConf.setVar(conf, ConfVars.THRIFT_URIS, "thrift://localhost:" + port);
+    // MetastoreConf.setVar(conf, ConfVars.THRIFT_URIS, "thrift://localhost:" + port);
     MetastoreConf.setBoolVar(conf, ConfVars.EXECUTE_SET_UGI, false);
     return new HiveMetaStoreClient(conf);
   }
